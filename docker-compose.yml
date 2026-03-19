@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  user-activity-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: user-activity-api:local
+    container_name: user_activity_container
+
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+    env_file:
+      - .env
+
+    volumes:
+      - ./app:/app/app
+      - ./data:/app/data
+      - ./pyproject.toml:/app/pyproject.toml
+      - ./poetry.lock:/app/poetry.lock
+
+    ports:
+      - "${EXTERNAL_PORT:-8000}:8000"
+
+    restart: always
+
+    networks:
+      - network
+
+networks:
+  network:
+    driver: bridge
